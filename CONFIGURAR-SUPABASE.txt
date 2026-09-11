@@ -1,0 +1,92 @@
+=============================================
+CONFIGURAR SUPABASE PARA TIENDAYA
+=============================================
+
+PASO 1: CREAR CUENTA Y PROYECTO
+---------------------------------
+1. Andá a https://supabase.com y creá una cuenta (gratis)
+2. Andá a https://app.supabase.com
+3. Click "New Project"
+4. Elegí una contraseña para la base de datos (GUARDALA, no se puede recuperar)
+5. Región: US East (o la más cercana)
+6. Click "Create new project"
+7. Esperá ~2 minutos a que se cree
+
+
+PASO 2: COPIAR CREDENCIALES
+---------------------------------
+1. En tu proyecto, andá a Settings → API (icono de engranaje arriba a la izquierda)
+2. Copiá estos valores:
+   - Project URL → algo como https://abcdef.supabase.co
+   - Project API Key → anon public (empieza con eyJ...)
+
+
+PASO 3: CONFIGURAR EN VERCEL
+---------------------------------
+1. Andá a https://vercel.com/tu-usuario/tiendaya/settings/environment-variables
+2. Actualizá estas variables con tus valores reales:
+   - NEXT_PUBLIC_SUPABASE_URL → tu Project URL
+   - NEXT_PUBLIC_SUPABASE_ANON_KEY → tu anon key
+   - NEXT_PUBLIC_APP_URL → https://tiendaya.vercel.app
+3. Click "Save"
+
+
+PASO 4: CREAR LAS TABLAS
+---------------------------------
+1. En Supabase, andá al SQL Editor (icono de terminal en el menú izquierdo)
+2. Copiá y pegá TODO el contenido del archivo supabase/schema.sql
+3. Click "Run" (o presioná Ctrl+Enter)
+
+
+PASO 5: CREAR USUARIO DEL TENDERO
+---------------------------------
+1. En Supabase, andá a Authentication → Users
+2. Click "Add user"
+3. Email: tendero@tiendaya.com (o el que quieras)
+4. Password: la que quieras
+5. Click "Create user"
+
+
+PASO 6: ASIGNAR ROL DE TENDERO
+---------------------------------
+Después de crear el usuario, andá al SQL Editor y ejecutá:
+
+  UPDATE profiles
+  SET rol = 'shopkeeper'
+  WHERE id = (SELECT id FROM auth.users WHERE email = 'tendero@tiendaya.com');
+
+(Reemplazá 'tendero@tiendaya.com' con el email que usaste en el paso 5)
+
+
+PASO 7: ACTIVAR REALTIME
+---------------------------------
+1. En Supabase, andá a Database → Replication
+2. Activá la replicación para la tabla "orders"
+3. Click "Enable"
+
+
+=============================================
+RESUMEN RÁPIDO
+=============================================
+
+Paso 1 → supabase.com         → Creás proyecto
+Paso 2 → Settings → API       → Copiás URL + key
+Paso 3 → Vercel → Env vars    → Pegás credenciales
+Paso 4 → SQL Editor           → Ejecutás schema.sql
+Paso 5 → Authentication → Users → Creás usuario tendero
+Paso 6 → SQL Editor           → Asignás rol shopkeeper
+Paso 7 → Database → Replication → Activás Realtime en orders
+
+
+=============================================
+NOTA IMPORTANTE
+=============================================
+
+Los datos de ejemplo (productos) se crean automáticamente al
+ejecutar el schema.sql en el paso 4.
+
+La contraseña del usuario del tendero la elegís vos en el paso 5.
+Anotala porque la vas a necesitar para iniciar sesión en la app.
+
+Si algo sale mal, revisá la consola del navegador (F12) para
+ver los errores de Supabase.
